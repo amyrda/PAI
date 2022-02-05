@@ -1,0 +1,43 @@
+version: '3'
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    ports:
+      - "4200:4200"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+  db:
+    image: mysql:5.7
+    container_name: db
+    command: [
+        '--default_authentication_plugin=mysql_native_password',
+        '--character-set-server=utf8mb4',
+        '--collation-server=utf8mb4_unicode_ci'
+    ]
+    environment:
+      MYSQL_DATABASE: pai
+      MYSQL_USER: pai
+      MYSQL_PASSWORD: pai
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - db-vol:/var/lib/mysql
+  phpmyadmin:
+    image: phpmyadmin
+    container_name: pma
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: root
+      restart: always
+    ports:
+      - "8080:80"
+volumes:
+  db-vol:
